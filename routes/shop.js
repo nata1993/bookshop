@@ -2,10 +2,11 @@
 const rootDir = require('../utilities/path');*/
 const express = require('express');
 const router = express.Router();
-const productController = require('../controllers/products');
+const productController = require('../controllers/shopController');
 
 router.get('/', productController.getProducts);
-router.get('/products');
+router.get('/products', productController.getProducts);
+router.get('/products/:productId', productController.getProduct);
 router.get('/cart');
 router.get('/checkout');
 
