@@ -2,9 +2,10 @@ const Product = require('../models/product')
 
 // admin page 
 exports.getAddProduct = (req, res) =>{
-    res.render('admin/add-product.ejs',{
+    res.render('admin/edit-product.ejs',{
         PageTitle: 'Add product',
-        Path: '/admin/add-product'   // used for marking what page is used and colors it yellow
+        Path: '/admin/add-product',   // used for marking what page is used and colors it yellow
+        editing: false
     });
 };
 
@@ -14,12 +15,42 @@ exports.postAddProduct = (req, res) =>{
     res.redirect('/');
 };
 
+exports.getEditProduct = (req, res) =>{
+    const editMode = req.query.editing;
+    const productId = req.params.productId;
+
+    Product.findById(productId, product => {
+        if(!productId){
+            return res.redirect('/');
+        }
+    
+        res.render('admin/edit-product.ejs',{
+            PageTitle: 'Edit product',
+            Path: '/admin/edit-product',   // used for marking what page is used and colors it yellow
+            editing: editMode,
+            product: product
+        });
+    });
+};
+
+exports.postEditProduct = (req, res) => {
+    const productId = req.body.productId;
+    const updatedTitle = req.body.title;
+    const updatedPrice = req.body.price;
+    const updatedImageurl = req.body.imageUrl;
+    const updatedDescription = req.body.description;
+
+    const updatedProduct = new Product(productId, updatedTitle, updatedImageurl, updatedPrice, updatedDescription);
+    updatedProduct.save();
+    res.redirect('/admin/products');
+};
+
 exports.getProducts = (req, res) => {
     Product.fetchAll(products => {
-        res.render('admin/product.ejs',{
+        res.render('admin/products.ejs',{
             Products: products,
             PageTitle: 'Admin Products',
             Path: '/admin/products'
         });
     });
-}
+};

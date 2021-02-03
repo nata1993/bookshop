@@ -5,9 +5,11 @@ const router = express.Router();
 const productController = require('../controllers/adminController');
 
 router.get('/add-product', productController.getAddProduct);    // no () at the end, else it will be intstantly called = bug
-router.get('/products');
+router.get('/products', productController.getProducts);
+router.get('/edit-product/:productId', productController.getEditProduct);
 
 router.post('/add-product', productController.postAddProduct);
+router.post('/edit-product', productController.postEditProduct);
 
 // export router or else we cant use it
 //module.exports = router;
