@@ -2,12 +2,13 @@
 const rootDir = require('../utilities/path');*/
 const express = require('express');
 const router = express.Router();
-const productController = require('../controllers/shopController');
+const shopController = require('../controllers/shopController');
 
-router.get('/', productController.getProducts);
-router.get('/products', productController.getProducts);
-router.get('/products/:productId', productController.getProduct);
-router.get('/cart');
+router.get('/', shopController.getProducts);
+router.get('/products', shopController.getProducts);
+router.get('/products/:productId', shopController.getProduct);
+router.get('/cart', shopController.getCart);
+router.post('/cart', shopController.postCart);
 router.get('/checkout');
 
 // export router or else we cant use it
