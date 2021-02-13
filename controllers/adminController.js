@@ -10,7 +10,7 @@ exports.getAddProduct = (req, res) =>{
 };
 
 exports.postAddProduct = (req, res) =>{
-    const product = new Product(req.body.title, req.body.imageUrl, req.body.price, req.body.description);
+    const product = new Product(null, req.body.title, req.body.imageUrl, req.body.price, req.body.description);
     product.save();
     res.redirect('/');
 };
