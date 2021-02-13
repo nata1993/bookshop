@@ -52,7 +52,28 @@ exports.getProducts = (req, res) => {
         res.render('admin/products.ejs',{
             products: _products,
             pageTitle: 'Admin Products',
-            path: '/admin/products'
+            path: '/admin/products' // used for marking what page is used and colors it yellow in nav.ejs
         });
     });
+};
+
+exports.postDeleteProduct = (req, res) => {
+    const productId = req.body.productId;
+    const title = req.body.title;
+
+    Product.fetchAll(_products => {
+        if(!productId){
+            return res.redirect('/');
+        }
+
+        _products = Product.deleteById(_products, productId);
+
+        /*res.render('admin/products.ejs',{
+            products: _products,
+            pageTitle: 'Admin Products',
+            path: '/admin/products' // used for marking what page is used and colors it yellow in nav.ejs
+        });*/
+        res.redirect('/');
+    });
+    console.log("deleted " + title + "\n");
 };

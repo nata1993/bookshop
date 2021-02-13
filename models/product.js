@@ -9,7 +9,7 @@ const getProductsFromFile = (cb) => {
             return cb([]);
         }
 
-        cb(JSON.parse(fileContent));
+        return cb(JSON.parse(fileContent));
     });
 }
 
@@ -38,6 +38,26 @@ module.exports = class Product {
                     console.log("Product model writeFile \"adding\": " + error);
                 });
             } 
+        });
+    }
+
+    static deleteById(arr, id){
+        /*const requiredIndex = arr.findIndex(el => {
+           return el.id === id;
+        });
+        if(requiredIndex === -1){
+           return false;
+        };
+        return arr.splice(requiredIndex, 1);*/
+        
+        for(let i = 0; i < arr.length; i++){
+            console.log(arr[i]);
+            if(arr[i].id === id){
+                delete arr[i];
+            }
+        }
+        fs.writeFile(filePath, JSON.stringify(arr), (error) => {
+            console.log("Product model WiteFile \"deleting\": " + error)
         });
     }
 
