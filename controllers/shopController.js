@@ -30,9 +30,9 @@ exports.getCart = (req, res) => {
             const cartProducts = [];
 
             for(product of products){
-                const cartProductData = cart.product.find(cartProduct => cartProduct.id === product.id);
+                const cartProductData = cart.products.find(cartProduct => cartProduct.id === product.id);
                 if(cartProductData){
-                    cartProducts.push({productData: products, qty: cartProductData.qty});
+                    cartProducts.push({productData: product, qty: cartProductData.qty});
                 }
             }
             
