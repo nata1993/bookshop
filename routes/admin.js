@@ -2,14 +2,14 @@
 const rootDir = require('../utilities/path');*/
 const express = require('express');
 const router = express.Router();
-const productController = require('../controllers/adminController');
+const adminController = require('../controllers/adminController');
 
-router.get('/add-product', productController.getAddProduct);    // no () at the end, else it will be intstantly called = bug
-router.get('/products', productController.getProducts);
-router.get('/edit-product/:productId', productController.getEditProduct);
+router.get('/add-product', adminController.getAddProduct);    // no () at the end, else it will be instantly called = bug
+router.get('/products', adminController.getProducts);
+router.get('/edit-product/:productId', adminController.getEditProduct);
 
-router.post('/add-product', productController.postAddProduct);
-router.post('/edit-product', productController.postEditProduct);
+router.post('/add-product', adminController.postAddProduct);
+router.post('/edit-product', adminController.postEditProduct);
 
 // export router or else we cant use it
 //module.exports = router;

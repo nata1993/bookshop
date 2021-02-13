@@ -4,7 +4,6 @@
 
     <body>
         <%- include('../includes/nav.ejs') %>
-
             <main>
                 <% if (productsMain.length > 0) { %>
                     <div class="grid">
@@ -31,10 +30,10 @@
                                     <%- include('../includes/add-to-cart.ejs', {product: product}) %>
                                 </div>
                             </article>
-                            <% } %>
-                    </div>
-                    <% } else { %>
-                        <h1>No Products Found!</h1>
                         <% } %>
+                    </div>
+                <% } else { %>
+                    <h1>No Products Found!</h1>
+                <% } %>
             </main>
-            <%- include('../includes/end.ejs') %>
+        <%- include('../includes/end.ejs') %>

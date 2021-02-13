@@ -3,13 +3,13 @@ const path = require('path');
 const filePath = path.join(path.dirname(require.main.filename), 'data', 'products.json');
 
 // read from products.json
-const getProductsFromFile = (callback) => {
+const getProductsFromFile = (cb) => {
     fs.readFile(filePath, (error, fileContent) =>{
         if(error){
-            return callback([]);
+            return cb([]);
         }
 
-        callback(JSON.parse(fileContent));
+        cb(JSON.parse(fileContent));
     });
 }
 

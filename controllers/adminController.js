@@ -3,8 +3,8 @@ const Product = require('../models/product')
 // admin page 
 exports.getAddProduct = (req, res) =>{
     res.render('admin/edit-product.ejs',{
-        PageTitle: 'Add product',
-        Path: '/admin/add-product',   // used for marking what page is used and colors it yellow
+        pageTitle: 'Add product',
+        path: '/admin/add-product',   // used for marking what page is used and colors it yellow
         editing: false
     });
 };
@@ -25,8 +25,8 @@ exports.getEditProduct = (req, res) =>{
         }
     
         res.render('admin/edit-product.ejs',{
-            PageTitle: 'Edit product',
-            Path: '/admin/edit-product',   // used for marking what page is used and colors it yellow
+            pageTitle: 'Edit product',
+            path: '/admin/edit-product',   // used for marking what page is used and colors it yellow
             editing: editMode,
             product: product
         });
@@ -49,8 +49,8 @@ exports.getProducts = (req, res) => {
     Product.fetchAll(products => {
         res.render('admin/products.ejs',{
             Products: products,
-            PageTitle: 'Admin Products',
-            Path: '/admin/products'
+            pageTitle: 'Admin Products',
+            path: '/admin/products'
         });
     });
 };

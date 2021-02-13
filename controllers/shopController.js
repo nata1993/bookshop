@@ -3,11 +3,11 @@ const Cart = require('../models/cart');
 
 // shop page 
 exports.getProducts = (req, res) =>{
-    Product.fetchAll(products => {
+    Product.fetchAll(products => {  // callback arrow function
         res.render('shop/product-list.ejs',{
             productsMain: products,
-            PageTitle: 'Main Page',
-            Path: '/products'
+            pageTitle: 'Main Page',
+            path: '/products'
         });
     });
 };
@@ -18,8 +18,8 @@ exports.getProduct = (req, res) =>{
     Product.findById(productId, product => {
         res.render('shop/product-detail.ejs', {
             product: product,
-            PageTitle: product.title,
-            Path: '/products'
+            pageTitle: product.title,
+            path: '/products'
         });
     });
 };
@@ -35,9 +35,9 @@ exports.getCart = (req, res) => {
                 }
             }
             res.render('shop/cart.ejs', {
-                Path: '/cart',
-                PageTitle: 'Your cart',
-                products: cartProducts
+                products: cartProducts ,              
+                pageTitle: 'Your cart',
+                path: '/cart'     
             });
         });
     });
