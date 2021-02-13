@@ -28,12 +28,14 @@ exports.getCart = (req, res) => {
     Cart.getCart(cart => {
         Product.fetchAll(products => {
             const cartProducts = [];
+
             for(product of products){
                 const cartProductData = cart.product.find(cartProduct => cartProduct.id === product.id);
                 if(cartProductData){
                     cartProducts.push({productData: products, qty: cartProductData.qty});
                 }
             }
+            
             res.render('shop/cart.ejs', {
                 products: cartProducts ,              
                 pageTitle: 'Your cart',

@@ -4,7 +4,7 @@ const Product = require('../models/product')
 exports.getAddProduct = (req, res) =>{
     res.render('admin/edit-product.ejs',{
         pageTitle: 'Add product',
-        path: '/admin/add-product',   // used for marking what page is used and colors it yellow
+        path: '/admin/add-product',   // used for marking what page is used and colors it yellow in nav.ejs
         editing: false
     });
 };
@@ -16,19 +16,21 @@ exports.postAddProduct = (req, res) =>{
 };
 
 exports.getEditProduct = (req, res) =>{
+// /admin/edit-product/0.45509088659039443?editing=true - whar comes after ? is req.query, before it is req.params
+
     const editMode = req.query.editing;
     const productId = req.params.productId;
 
-    Product.findById(productId, product => {
+    Product.findById(productId, _product => {
         if(!productId){
             return res.redirect('/');
         }
     
         res.render('admin/edit-product.ejs',{
             pageTitle: 'Edit product',
-            path: '/admin/edit-product',   // used for marking what page is used and colors it yellow
+            path: '/admin/edit-product',   // used for marking what page is used and colors it yellow in nav.ejs
             editing: editMode,
-            product: product
+            product: _product
         });
     });
 };
@@ -36,8 +38,8 @@ exports.getEditProduct = (req, res) =>{
 exports.postEditProduct = (req, res) => {
     const productId = req.body.productId;
     const updatedTitle = req.body.title;
-    const updatedPrice = req.body.price;
     const updatedImageurl = req.body.imageUrl;
+    const updatedPrice = req.body.price;
     const updatedDescription = req.body.description;
 
     const updatedProduct = new Product(productId, updatedTitle, updatedImageurl, updatedPrice, updatedDescription);
@@ -46,9 +48,9 @@ exports.postEditProduct = (req, res) => {
 };
 
 exports.getProducts = (req, res) => {
-    Product.fetchAll(products => {
+    Product.fetchAll(_products => {
         res.render('admin/products.ejs',{
-            Products: products,
+            products: _products,
             pageTitle: 'Admin Products',
             path: '/admin/products'
         });

@@ -35,7 +35,7 @@ module.exports = class Product {
                 this.id = Math.random().toString();
                 products.push(this);
                 fs.writeFile(filePath, JSON.stringify(products), (error) => {
-                    console.log("Filepath error: " + error);
+                    console.log("Product model writeFile: " + error);
                 });
             } 
         });

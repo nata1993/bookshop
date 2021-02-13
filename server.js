@@ -26,7 +26,7 @@ app.use('/', shopRouter);
 
 // must be last, else will be triggered before any other logic
 app.use((req, res) => {
-    res.render('404.ejs', { PageTitle: 'Page not found', Path: ''});
+    res.render('404.ejs', { pageTitle: 'Page not found', path: ''});
 
     //res.status(404).sendFile(path.join(rootDir, 'views', '404.ejs')); // used to send specific file from specific place
 });

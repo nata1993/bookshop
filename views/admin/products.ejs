@@ -5,9 +5,9 @@
     <body>
         <%- include('../includes/nav.ejs') %>
             <main>
-                <% if (Products.length > 0) { %>
+                <% if (products.length > 0) { %>
                     <div class="grid">
-                        <% for (let product of Products) { %>
+                        <% for (let product of products) { %>
                             <article class="card product-item">
                                 <header class="card__header">
                                     <h1 class="product__title">
@@ -30,13 +30,12 @@
                                     <form action="/admin/delete-product" method="POST">
                                         <button class="btn" type="submit">Delete</button>
                                     </form>
-
                                 </div>
                             </article>
-                            <% } %>
-                    </div>
-                    <% } else { %>
-                        <h1>No Products Found!</h1>
                         <% } %>
+                    </div>
+                <% } else { %>
+                    <h1>No Products Found!</h1>
+                <% } %>
             </main>
-            <%- include('../includes/end.ejs') %>
+        <%- include('../includes/end.ejs') %>
