@@ -3,12 +3,16 @@ const Cart = require('../models/cart');
 
 // shop page 
 exports.getProducts = (req, res) =>{
-    Product.fetchAll(products => {  // callback arrow function
+    Product.fetchAll()
+    .then(products => {  // callback arrow function
         res.render('shop/product-list.ejs',{
             productsMain: products,
             pageTitle: 'Main Page',
             path: '/products'
         });
+    })
+    .catch(error => {
+        console.log("Failed to fetch for shop controller");
     });
 };
 

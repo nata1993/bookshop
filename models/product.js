@@ -1,68 +1,56 @@
-const fs = require('fs');   // filesystem
-const path = require('path');
-const filePath = path.join(path.dirname(require.main.filename), 'data', 'products.json');
-const Cart = require('./cart');
+const mongodb = require('mongodb');
+const getDB = require('../utilities/db').getDB;
 
-// read from products.json
-const getProductsFromFile = (cb) => {
-    fs.readFile(filePath, (error, fileContent) =>{
-        if(error){
-            return cb([]);
+class Product{
+    constructor(title, imageUrl, price, description, id){
+        this.title = title;
+        this.imageUrl = imageUrl;
+        this.price = price;
+        this.description = description;
+        this.id = id ? new mongodb.ObjectId(id) : null  ;
+    }
+
+    save(){
+        const db = getDB(); // connect to mongo db
+        let dbOperation;
+
+        if(this._id){
+            dbOperation = db.collection('products').updateOne({_id: this._id}, {$set: this});
+        } else {
+            dbOperation = db.collection('products').insertOne(this);
         }
 
-        return cb(JSON.parse(fileContent));
-    });
+        return dbOperation.then(result => {
+            console.log("success");
+        })
+        .catch(error => {
+            throw error;
+        });
+    }
+
+    static fetchAll(){
+        const db = getDB();
+
+        return db.collection("products").find().toArray()
+        .then(products => {
+            return products;
+        })
+        .catch(error=> {
+            console.log("Failed to fetch all poducts");
+        });
+    }
+
+    static findById(productId){
+        const db = getDB();
+
+        return db.collection("products").find({_id: new mongodb.ObjectId(productId)})
+        .then(product => {
+            return product;
+        })
+        .catch(error => {
+            console.log("failed to fetch the product details");
+        });
+    };
 }
 
-module.exports = class Product {
-    constructor(id, title, url, price, description){
-        this.id = id,
-        this.title = title,
-        this.imageUrl = url,
-        this.price = price,
-        this.description = description
-    }
-
-    save(){ // save to products.json
-        getProductsFromFile(products => {
-            if(this.id){
-                const existingProductIndex = products.findIndex(product => product.id === this.id);
-                const updatedProducts = [...products]; //spread operator
-                updatedProducts[existingProductIndex] = this;
-                fs.writeFile(filePath, JSON.stringify(updatedProducts), (error) => {
-                    console.log("Product model WiteFile \"editing\": " + error)
-                });
-            } else{
-                this.id = Math.random().toString();
-                products.push(this);
-                fs.writeFile(filePath, JSON.stringify(products), (error) => {
-                    console.log("Product model writeFile \"adding\": " + error);
-                });
-            } 
-        });
-    }
-
-    static deleteById(id){
-        getProductsFromFile(products => {
-            const product = products.find(productInArray => productInArray.id === id);
-            const updatedProducts = products.filter(product => product.id !== id);
-
-            fs.writeFile(filePath, JSON.stringify(updatedProducts), (error) => {
-                console.log("Product model WriteFile \"deleting\": " + error);
-                Cart.deleteProducts(product.id, product.price);
-            });
-        });
-    }
-
-    static fetchAll(cb){
-        getProductsFromFile(cb);
-    }
-
-    static findById(id, cb){
-        getProductsFromFile(products => {
-            // filter a product by its id
-            const product = products.find(p => p.id === id);
-            cb(product);
-        });
-    }
-};
+module.exports = Product;

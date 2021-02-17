@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const adminRouter = require('./routes/admin');  // no need to use .js at the end cause express will do it for us
 const shopRouter = require('./routes/shop');  // no need to use .js at the end cause express will do it for us
 const port = 3000;
+const mongoConnect = require('./utilities/db').mongoConnect;
 
 
 // init app
@@ -32,6 +33,8 @@ app.use((req, res) => {
 });
 
 // app will run on this port
-app.listen(port, () => {
-    console.log(`app running on port ${port}\n`);
+mongoConnect(() => {
+    app.listen(port, () => {
+        console.log(`app running on port ${port}\n`);
+    });
 });

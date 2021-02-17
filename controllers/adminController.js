@@ -11,8 +11,15 @@ exports.getAddProduct = (req, res) =>{
 
 exports.postAddProduct = (req, res) =>{
     const product = new Product(null, req.body.title, req.body.imageUrl, req.body.price, req.body.description);
-    product.save();
-    res.redirect('/');
+    product.save()
+    .then(result => {
+        console.log("product saved");
+        res.redirect("/admin/products");
+    })
+    .catch(error => {
+        console.log("product not saved");
+        res.redirect('/');
+    }); 
 };
 
 exports.getEditProduct = (req, res) =>{
@@ -48,12 +55,16 @@ exports.postEditProduct = (req, res) => {
 };
 
 exports.getProducts = (req, res) => {
-    Product.fetchAll(_products => {
+    Product.fetchAll()
+    .then(_products => {
         res.render('admin/products.ejs',{
             products: _products,
             pageTitle: 'Admin Products',
             path: '/admin/products' // used for marking what page is used and colors it yellow in nav.ejs
         });
+    })
+    .catch(error => {
+        console.log("Failed to fetch all for admin controller");
     });
 };
 
