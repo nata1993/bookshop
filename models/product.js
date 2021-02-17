@@ -1,6 +1,7 @@
 const fs = require('fs');   // filesystem
 const path = require('path');
 const filePath = path.join(path.dirname(require.main.filename), 'data', 'products.json');
+const Cart = require('./cart');
 
 // read from products.json
 const getProductsFromFile = (cb) => {
@@ -41,23 +42,15 @@ module.exports = class Product {
         });
     }
 
-    static deleteById(arr, id){
-        /*const requiredIndex = arr.findIndex(el => {
-           return el.id === id;
-        });
-        if(requiredIndex === -1){
-           return false;
-        };
-        return arr.splice(requiredIndex, 1);*/
-        
-        for(let i = 0; i < arr.length; i++){
-            console.log(arr[i]);
-            if(arr[i].id === id){
-                delete arr[i];
-            }
-        }
-        fs.writeFile(filePath, JSON.stringify(arr), (error) => {
-            console.log("Product model WiteFile \"deleting\": " + error)
+    static deleteById(id){
+        getProductsFromFile(products => {
+            const product = products.find(productInArray => productInArray.id === id);
+            const updatedProducts = products.filter(product => product.id !== id);
+
+            fs.writeFile(filePath, JSON.stringify(updatedProducts), (error) => {
+                console.log("Product model WriteFile \"deleting\": " + error);
+                Cart.deleteProducts(product.id, product.price);
+            });
         });
     }
 

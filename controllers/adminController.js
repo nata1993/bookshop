@@ -61,19 +61,11 @@ exports.postDeleteProduct = (req, res) => {
     const productId = req.body.productId;
     const title = req.body.title;
 
-    Product.fetchAll(_products => {
-        if(!productId){
-            return res.redirect('/');
-        }
+    if(!productId){
+        return res.redirect('/');
+    }
 
-        _products = Product.deleteById(_products, productId);
-
-        /*res.render('admin/products.ejs',{
-            products: _products,
-            pageTitle: 'Admin Products',
-            path: '/admin/products' // used for marking what page is used and colors it yellow in nav.ejs
-        });*/
-        res.redirect('/');
-    });
+    Product.deleteById(productId);
     console.log("deleted " + title + "\n");
+    return res.redirect('/');
 };
