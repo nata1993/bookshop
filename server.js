@@ -6,12 +6,23 @@ const shopRouter = require('./routes/shop');  // no need to use .js at the end c
 const port = 3000;
 const mongoConnect = require('./utilities/db').mongoConnect;
 
+const User = require('./models/user');
 
 // init app
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', ejs);
 app.use(express.static('public'));  // for css
+
+app.use((req, res, next) => {
+    User.findById("6045130bfb524546a4560182")
+    .then(user => {
+        console.log(user);
+        req.user = new User(user.name, user.email, user.cart, user._id);
+        next();
+    });
+    
+});
 
 // the single route to specific page but we will use router
 /*app.get('/admin/add-product', (req, res) =>{
@@ -21,7 +32,6 @@ app.use(express.static('public'));  // for css
 
 // using router for admin page
 app.use('/admin', adminRouter); // if comes admin request, use admin router
-
 // using router for shop page
 app.use('/', shopRouter);
 
@@ -38,3 +48,5 @@ mongoConnect(() => {
         console.log(`app running on port ${port}\n`);
     });
 });
+
+// "C:\Program Files\MongoDB\Server\4.4\bin\mongod.exe"

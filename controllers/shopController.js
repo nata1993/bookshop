@@ -29,31 +29,27 @@ exports.getProduct = (req, res) =>{
 };
 
 exports.getCart = (req, res) => {
-    Cart.getCart(cart => {
-        Product.fetchAll(products => {
-            const cartProducts = [];
-
-            for(product of products){
-                const cartProductData = cart.products.find(cartProduct => cartProduct.id === product.id);
-                if(cartProductData){
-                    cartProducts.push({productData: product, qty: cartProductData.qty});
-                }
-            }
-            
-            res.render('shop/cart.ejs', {
-                products: cartProducts ,              
-                pageTitle: 'Your cart',
-                path: '/cart'     
-            });
+    req.user.getCart()
+    .then(products => {
+        res.render('shop/cart.ejs', {
+            path: 'cart',
+            pageTitle: 'Your cart',
+            products: products
         });
+    })
+    .catch(error => {
+        console.log("Error with cart fetch");
     });
 }
 
 exports.postCart = (req, res) => {
     const productId = req.body.productId; 
-    Product.findById(productId, (product) =>{
-        Cart.addProduct(productId, product.price);
+    Product.findById(productId)
+    .then(product => {
+        req.user.addToCart(product);
+    })
+    .then(result => {
+        console.log("saved to cart");
         res.redirect('/cart');
-    });
+    });  
 }
-// https://www.w3schools.com/w3css/img_nature.jpg
