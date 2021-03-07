@@ -7,7 +7,7 @@ class Product{
         this.imageUrl = imageUrl;
         this.price = price;
         this.description = description;
-        this.id = id ? new mongodb.ObjectId(id) : null  ;
+        this._id = id ? new mongodb.ObjectId(id) : null;    // _id is mongoDB _id
     }
 
     save(){
@@ -43,14 +43,26 @@ class Product{
     static findById(productId){
         const db = getDB();
 
-        return db.collection("products").find({_id: new mongodb.ObjectId(productId)})
+        return db.collection("products").find({_id: new mongodb.ObjectId(productId)}).next()
         .then(product => {
             return product;
         })
         .catch(error => {
             console.log("failed to fetch the product details");
         });
-    };
+    }
+
+    static deleteById(productId){
+        const db = getDB();
+
+        return db.collection("products").deleteOne({_id: new mongodb.ObjectId(productId)})
+        .then(result => {
+            console.log("product succesfully deleted");
+        })
+        .catch(error => {
+            console.log("Coud not delete product fron DB");
+        });
+    }
 }
 
 module.exports = Product;

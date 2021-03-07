@@ -3,11 +3,12 @@ const MongoClient = mongodb.MongoClient;
 
 let _db;
 
-const mongoConnect = () => {
+const mongoConnect = (cb) => {
     MongoClient.connect('mongodb://localhost:27017/BookStoreDB', {useUnifiedTopology: true})
     .then(client => {
         console.log("Connected to DB.");
         _db = client.db();
+        cb();
     })
     .catch(error => {
         throw error;

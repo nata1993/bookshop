@@ -10,7 +10,7 @@ exports.getAddProduct = (req, res) =>{
 };
 
 exports.postAddProduct = (req, res) =>{
-    const product = new Product(null, req.body.title, req.body.imageUrl, req.body.price, req.body.description);
+    const product = new Product(req.body.title, req.body.imageUrl, req.body.price, req.body.description);
     product.save()
     .then(result => {
         console.log("product saved");
@@ -23,22 +23,28 @@ exports.postAddProduct = (req, res) =>{
 };
 
 exports.getEditProduct = (req, res) =>{
-// /admin/edit-product/0.45509088659039443?editing=true - whar comes after ? is req.query, before it is req.params
+// /admin/edit-product/0.45509088659039443?editing=true - what comes after ? is req.query, before it is req.params
 
     const editMode = req.query.editing;
     const productId = req.params.productId;
 
-    Product.findById(productId, _product => {
-        if(!productId){
+    Product.findById(productId)
+    .then(product => {
+        if(!product){
             return res.redirect('/');
         }
-    
-        res.render('admin/edit-product.ejs',{
-            pageTitle: 'Edit product',
-            path: '/admin/edit-product',   // used for marking what page is used and colors it yellow in nav.ejs
+
+        console.log(product);
+
+        res.render('admin/edit-product.ejs', {
+            pageTitle: "Edit product",
+            path: "admin/edit-product",
             editing: editMode,
-            product: _product
+            product: product
         });
+    })
+    .catch(error => {
+        console.log("Error on product editing: " + error);
     });
 };
 
@@ -49,7 +55,7 @@ exports.postEditProduct = (req, res) => {
     const updatedPrice = req.body.price;
     const updatedDescription = req.body.description;
 
-    const updatedProduct = new Product(productId, updatedTitle, updatedImageurl, updatedPrice, updatedDescription);
+    const updatedProduct = new Product(updatedTitle, updatedImageurl, updatedPrice, updatedDescription, productId);
     updatedProduct.save();
     res.redirect('/admin/products');
 };
@@ -76,7 +82,9 @@ exports.postDeleteProduct = (req, res) => {
         return res.redirect('/');
     }
 
-    Product.deleteById(productId);
-    console.log("deleted " + title + "\n");
-    return res.redirect('/');
+    Product.deleteById(productId)
+    .then(() => {
+        console.log("deleted " + title + "\n");
+        return res.redirect('/admin/products');
+    });
 };
