@@ -53,3 +53,14 @@ exports.postCart = (req, res) => {
         res.redirect('/cart');
     });  
 }
+
+exports.postDeleteFromCart = (req, res) => {
+    const productId = req.body.productId;
+    req.user.deleteItemFromCart(productId)
+    .then(result => {
+        res.redirect('/cart');
+    })
+    .catch(error => {
+        console.log("Could not delete item from cart");
+    });
+}
