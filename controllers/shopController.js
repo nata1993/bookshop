@@ -85,7 +85,7 @@ exports.getOrders = (req, res) => {
 
         });
     })
-    .carch(error => {
+    .catch(error => {
         console.log("Could not show orders");
     });
 }
