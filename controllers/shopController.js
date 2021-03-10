@@ -66,9 +66,26 @@ exports.postDeleteFromCart = (req, res) => {
 }
 
 exports.postOrder = (req, res) => {
-
+    req.user.addOrder()
+    .then(result => {
+        res.redirect('/orders');
+    })
+    .catch(error => {
+        console.log("could not add stuff to order");
+    });
 }
 
 exports.getOrders = (req, res) => {
+    req.user.getOrders()
+    .then(orders => {
+        res.render('shop/orders.ejs', {
+            path: '/orders',
+            pageTitle: 'Your orders',
+            orders: orders
 
+        });
+    })
+    .carch(error => {
+        console.log("Could not show orders");
+    });
 }
