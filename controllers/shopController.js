@@ -64,3 +64,11 @@ exports.postDeleteFromCart = (req, res) => {
         console.log("Could not delete item from cart");
     });
 }
+
+exports.postOrder = (req, res) => {
+
+}
+
+exports.getOrders = (req, res) => {
+
+}

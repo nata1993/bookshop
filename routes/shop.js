@@ -10,7 +10,8 @@ router.get('/products/:productId', shopController.getProduct);
 router.get('/cart', shopController.getCart);
 router.post('/cart', shopController.postCart);
 router.post('/cart-delete-item', shopController.postDeleteFromCart);
-router.get('/checkout');
+router.get('/orders', shopController.getOrders);
+router.post('/create-order', shopController.postOrder);
 
 
 // export router or else we cant use it
