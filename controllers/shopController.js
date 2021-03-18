@@ -1,9 +1,10 @@
 const Product = require('../models/product');
 const Cart = require('../models/cart');
+const Order = require('../models/order');
 
 // shop page 
 exports.getProducts = (req, res) =>{
-    Product.fetchAll()
+    Product.find()
     .then(products => {  // callback arrow function
         res.render('shop/product-list.ejs',{
             productsMain: products,
@@ -29,8 +30,10 @@ exports.getProduct = (req, res) =>{
 };
 
 exports.getCart = (req, res) => {
-    req.user.getCart()
-    .then(products => {
+    req.user.populate('cart.items.productId')
+    .execPopulate()
+    .then(user => {
+        const products = user.cart.items;
         res.render('shop/cart.ejs', {
             path: 'cart',
             pageTitle: 'Your cart',
@@ -38,7 +41,7 @@ exports.getCart = (req, res) => {
         });
     })
     .catch(error => {
-        console.log("Error with cart fetch");
+        console.log("Error with cart fetch:\n" + error);
     });
 }
 
@@ -46,11 +49,14 @@ exports.postCart = (req, res) => {
     const productId = req.body.productId; 
     Product.findById(productId)
     .then(product => {
-        req.user.addToCart(product);
+        return req.user.addToCart(product);
     })
     .then(result => {
         console.log("saved to cart");
         res.redirect('/cart');
+    })
+    .catch(error=> {
+        console.log("Could not add product to cart:\n" + error);
     });  
 }
 
@@ -66,23 +72,40 @@ exports.postDeleteFromCart = (req, res) => {
 }
 
 exports.postOrder = (req, res) => {
-    req.user.addOrder()
-    .then(result => {
+    req.user.populate('cart.items.productId')
+    .execPopulate()
+    .then(user => {
+        const products = user.cart.items.map(item => {
+            return { qty: item.qty, product: {...item.productId._doc} };
+        });
+        const order = new Order({
+            user: {
+                name: req.user.name,
+                userId: req.user
+            },
+            products: products
+        });
+
+        return order.save();
+    })
+    .then(() => {
+        return req.user.clearCart();
+    })
+    .then(() => {
         res.redirect('/orders');
     })
     .catch(error => {
-        console.log("could not add stuff to order");
-    });
+        console.log("could not add stuff to order:\n" + error);
+    });;
 }
 
 exports.getOrders = (req, res) => {
-    req.user.getOrders()
+    Order.find({'user.userId' : req.user._id })
     .then(orders => {
         res.render('shop/orders.ejs', {
             path: '/orders',
             pageTitle: 'Your orders',
             orders: orders
-
         });
     })
     .catch(error => {

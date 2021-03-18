@@ -10,14 +10,21 @@ exports.getAddProduct = (req, res) =>{
 };
 
 exports.postAddProduct = (req, res) =>{
-    const product = new Product(req.body.title, req.body.imageUrl, req.body.price, req.body.description);
+    const product = new Product({
+        title: req.body.title, 
+        price: req.body.price, 
+        description: req.body.description, 
+        imageUrl: req.body.imageUrl,
+        userId: req.user._id
+    });
     product.save()
+
     .then(result => {
         console.log("product saved");
         res.redirect("/admin/products");
     })
     .catch(error => {
-        console.log("product not saved");
+        console.log("product not saved:\n" + error);
         res.redirect('/');
     }); 
 };
@@ -55,16 +62,28 @@ exports.postEditProduct = (req, res) => {
     const updatedPrice = req.body.price;
     const updatedDescription = req.body.description;
 
-    const updatedProduct = new Product(updatedTitle, updatedImageurl, updatedPrice, updatedDescription, productId);
-    updatedProduct.save();
+    Product.findById(productId).then(product => {
+        product.title = updatedTitle;
+        product.description = updatedDescription;
+        product.imgUrl = updatedImageurl;
+        product.price = updatedPrice;
+
+        return product.save();
+    })
+    .then(result => {
+        console.log("Updated product!");
+    })
+    .catch(error => {
+        console.log("Could not save updated product:\n" + error);
+    });
     res.redirect('/admin/products');
 };
 
 exports.getProducts = (req, res) => {
-    Product.fetchAll()
-    .then(_products => {
+    Product.find()      // fetchAll() here we wrote it ourselves but mongoose has it built in find()
+    .then(products => {
         res.render('admin/products.ejs',{
-            products: _products,
+            products: products,
             pageTitle: 'Admin Products',
             path: '/admin/products' // used for marking what page is used and colors it yellow in nav.ejs
         });
@@ -82,9 +101,12 @@ exports.postDeleteProduct = (req, res) => {
         return res.redirect('/');
     }
 
-    Product.deleteById(productId)
+    Product.findByIdAndDelete(productId)
     .then(() => {
         console.log("deleted " + title + "\n");
         return res.redirect('/admin/products');
+    })
+    .catch(error => {
+        console.log("Could not delete product:\n" + error);
     });
 };

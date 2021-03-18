@@ -1,10 +1,11 @@
 const express = require('express');
 const ejs = require('ejs');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 const adminRouter = require('./routes/admin');  // no need to use .js at the end cause express will do it for us
 const shopRouter = require('./routes/shop');  // no need to use .js at the end cause express will do it for us
 const port = 3000;
-const mongoConnect = require('./utilities/db').mongoConnect;
+//const mongoConnect = require('./utilities/db').mongoConnect; like a built in in nodejs but with fever features
 
 const User = require('./models/user');
 
@@ -15,13 +16,11 @@ app.set('view engine', ejs);
 app.use(express.static('public'));  // for css
 
 app.use((req, res, next) => {
-    User.findById("6045130bfb524546a4560182")
+    User.findById("60523d36fdb8422b0cc0d225")
     .then(user => {
-        console.log(user);
-        req.user = new User(user.name, user.email, user.cart, user._id);
+        req.user = user;
         next();
     });
-    
 });
 
 // the single route to specific page but we will use router
@@ -43,10 +42,27 @@ app.use((req, res) => {
 });
 
 // app will run on this port
-mongoConnect(() => {
+mongoose.connect('mongodb://localhost:27017/BookStoreDB', {useUnifiedTopology: true})
+.then( result => {
+    User.findOne().then(user => {
+        if(!user){
+            const user = new User({
+                name: 'John',
+                email: 'a@a.ee',
+                cart: {
+                    item: []
+                }
+            });
+            user.save();
+        }
+    });
+
     app.listen(port, () => {
         console.log(`app running on port ${port}\n`);
     });
+})
+.catch(error => {
+    console.log("Could not start server!");
 });
 
 // "C:\Program Files\MongoDB\Server\4.4\bin\mongod.exe"
