@@ -5,7 +5,8 @@ exports.getAddProduct = (req, res) =>{
     res.render('admin/edit-product.ejs',{
         pageTitle: 'Add product',
         path: '/admin/add-product',   // used for marking what page is used and colors it yellow in nav.ejs
-        editing: false
+        editing: false,
+        isAuthenticated: req.session.isLoggedIn
     });
 };
 
@@ -47,7 +48,8 @@ exports.getEditProduct = (req, res) =>{
             pageTitle: "Edit product",
             path: "admin/edit-product",
             editing: editMode,
-            product: product
+            product: product,
+            isAuthenticated: req.session.isLoggedIn
         });
     })
     .catch(error => {
@@ -85,7 +87,8 @@ exports.getProducts = (req, res) => {
         res.render('admin/products.ejs',{
             products: products,
             pageTitle: 'Admin Products',
-            path: '/admin/products' // used for marking what page is used and colors it yellow in nav.ejs
+            path: '/admin/products', // used for marking what page is used and colors it yellow in nav.ejs
+            isAuthenticated: req.session.isLoggedIn
         });
     })
     .catch(error => {

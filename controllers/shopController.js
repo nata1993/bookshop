@@ -9,11 +9,12 @@ exports.getProducts = (req, res) =>{
         res.render('shop/product-list.ejs',{
             productsMain: products,
             pageTitle: 'Main Page',
-            path: '/products'
+            path: '/products',
+            isAuthenticated: req.session.isLoggedIn
         });
     })
     .catch(error => {
-        console.log("Failed to fetch for shop controller");
+        console.log("Failed to fetch for shop controller:\n" + error);
     });
 };
 
@@ -24,7 +25,8 @@ exports.getProduct = (req, res) =>{
         res.render('shop/product-detail.ejs', {
             product: product,
             pageTitle: product.title,
-            path: '/products'
+            path: '/products',
+            isAuthenticated: req.session.isLoggedIn
         });
     });
 };
@@ -37,7 +39,8 @@ exports.getCart = (req, res) => {
         res.render('shop/cart.ejs', {
             path: 'cart',
             pageTitle: 'Your cart',
-            products: products
+            products: products,
+            isAuthenticated: req.session.isLoggedIn
         });
     })
     .catch(error => {
@@ -67,7 +70,7 @@ exports.postDeleteFromCart = (req, res) => {
         res.redirect('/cart');
     })
     .catch(error => {
-        console.log("Could not delete item from cart");
+        console.log("Could not delete item from cart:\n" + error);
     });
 }
 
@@ -105,10 +108,11 @@ exports.getOrders = (req, res) => {
         res.render('shop/orders.ejs', {
             path: '/orders',
             pageTitle: 'Your orders',
-            orders: orders
+            orders: orders,
+            isAuthenticated: req.session.isLoggedIn
         });
     })
     .catch(error => {
-        console.log("Could not show orders");
+        console.log("Could not show orders:\n" + error);
     });
 }

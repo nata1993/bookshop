@@ -2,24 +2,47 @@ const express = require('express');
 const ejs = require('ejs');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
+const port = 3000;
+
+
 const adminRouter = require('./routes/admin');  // no need to use .js at the end cause express will do it for us
 const shopRouter = require('./routes/shop');  // no need to use .js at the end cause express will do it for us
-const port = 3000;
-//const mongoConnect = require('./utilities/db').mongoConnect; like a built in in nodejs but with fever features
-
+const authRouter = require('./routes/auth');
+//const mongoConnect = require('./utilities/db').mongoConnect; like a built in in nodejs but with fewer features
 const User = require('./models/user');
 
 // init app
 const app = express();
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', ejs);
 app.use(express.static('public'));  // for css
 
+const store = new MongoDBStore({
+    uri: 'mongodb://localhost:27017/BookStoreDB',
+    collection: 'sessions'
+});
+
+app.use(session({
+    secret: 'my super-super secret secret',
+    resave: false,
+    saveUninitialized: false,
+    store: store
+}));
+
 app.use((req, res, next) => {
-    User.findById("60523d36fdb8422b0cc0d225")
+    if(!req.session.user){
+        return next();
+    }
+    User.findById(req.session.user._id)
     .then(user => {
         req.user = user;
         next();
+    })
+    .catch(error => {
+        console.log("Could not get user\n" + error);
     });
 });
 
@@ -29,14 +52,17 @@ app.use((req, res, next) => {
 
 });*/
 
+// using router for authentication page
+app.use(authRouter);
 // using router for admin page
 app.use('/admin', adminRouter); // if comes admin request, use admin router
 // using router for shop page
-app.use('/', shopRouter);
+app.use(shopRouter);
+
 
 // must be last, else will be triggered before any other logic
 app.use((req, res) => {
-    res.render('404.ejs', { pageTitle: 'Page not found', path: ''});
+    res.render('404.ejs', { pageTitle: 'Page not found', path: '', isAuthenticated: req.session.isLoggedIn });
 
     //res.status(404).sendFile(path.join(rootDir, 'views', '404.ejs')); // used to send specific file from specific place
 });
@@ -58,7 +84,7 @@ mongoose.connect('mongodb://localhost:27017/BookStoreDB', {useUnifiedTopology: t
     });
 
     app.listen(port, () => {
-        console.log(`app running on port ${port}\n`);
+        console.log(`App running on port ${port}\n`);
     });
 })
 .catch(error => {

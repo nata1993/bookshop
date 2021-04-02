@@ -13,6 +13,4 @@ router.post('/edit-product', adminController.postEditProduct);
 router.post('/delete-product', adminController.postDeleteProduct);
 
 // export router or else we cant use it
-//module.exports = router;
-
 module.exports = router;
