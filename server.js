@@ -3,6 +3,8 @@ const ejs = require('ejs');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
+const flash = require('connect-flash');
+const csurf = require('csurf');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const port = 3000;
 
@@ -25,12 +27,17 @@ const store = new MongoDBStore({
     collection: 'sessions'
 });
 
+const csurfProtection = csurf();
 app.use(session({
     secret: 'my super-super secret secret',
     resave: false,
     saveUninitialized: false,
     store: store
 }));
+
+// use csurf
+app.use(csurfProtection);
+app.use(flash());
 
 app.use((req, res, next) => {
     if(!req.session.user){
@@ -46,11 +53,10 @@ app.use((req, res, next) => {
     });
 });
 
-// the single route to specific page but we will use router
-/*app.get('/admin/add-product', (req, res) =>{
-    res.send("hello admin");
-
-});*/
+app.use((req, res, next) => {
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
 
 // using router for authentication page
 app.use(authRouter);
@@ -70,19 +76,6 @@ app.use((req, res) => {
 // app will run on this port
 mongoose.connect('mongodb://localhost:27017/BookStoreDB', {useUnifiedTopology: true})
 .then( result => {
-    User.findOne().then(user => {
-        if(!user){
-            const user = new User({
-                name: 'John',
-                email: 'a@a.ee',
-                cart: {
-                    item: []
-                }
-            });
-            user.save();
-        }
-    });
-
     app.listen(port, () => {
         console.log(`App running on port ${port}\n`);
     });

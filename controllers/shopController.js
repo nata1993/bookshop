@@ -10,7 +10,8 @@ exports.getProducts = (req, res) =>{
             productsMain: products,
             pageTitle: 'Main Page',
             path: '/products',
-            isAuthenticated: req.session.isLoggedIn
+            isAuthenticated: req.session.isLoggedIn,
+            csrfToken: req.csrfToken()
         });
     })
     .catch(error => {
